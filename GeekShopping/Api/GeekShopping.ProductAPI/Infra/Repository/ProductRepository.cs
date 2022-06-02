@@ -9,10 +9,10 @@ namespace GeekShopping.ProductAPI.Infra.Repository
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly MySQLContext _context;
+        private readonly ProductContext _context;
         private readonly IMapper _mapper;
 
-        public ProductRepository(MySQLContext context, IMapper mapper)
+        public ProductRepository(ProductContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
