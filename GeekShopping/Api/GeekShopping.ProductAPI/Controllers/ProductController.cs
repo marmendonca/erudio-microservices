@@ -1,5 +1,7 @@
 ﻿using GeekShopping.ProductAPI.Infra.Repository.Interfaces;
 using GeekShopping.ProductAPI.Models.Dtos;
+using GeekShopping.ProductAPI.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,19 +20,18 @@ namespace GeekShopping.ProductAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProductDto>>> FindAll()
         {
             var products = await _productRepository.FindAllAsync();
 
-            var productsMock = CreateProductList();
-            productsMock.AddRange(products);
+            if (products == null) return NotFound();
 
-            if (productsMock == null) return NotFound();
-
-            return Ok(productsMock);
+            return Ok(products);
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> FindById(long id)
         {
             var product = await _productRepository.FindById(id);
@@ -41,6 +42,7 @@ namespace GeekShopping.ProductAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post([FromBody] ProductDto productDto)
         {
             if (productDto == null) return BadRequest();
@@ -53,6 +55,7 @@ namespace GeekShopping.ProductAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Put([FromBody] ProductDto productDto)
         {
             if (productDto == null) return BadRequest();
@@ -64,7 +67,8 @@ namespace GeekShopping.ProductAPI.Controllers
             return Ok(product);
         }
 
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
+        [Authorize(Roles = Role.Admin)]
         public async Task<IActionResult> Delete(long id)
         {
             var isSuccessDelete = await _productRepository.Delete(id);

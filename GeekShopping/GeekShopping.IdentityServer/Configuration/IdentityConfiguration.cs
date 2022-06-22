@@ -33,7 +33,7 @@ namespace GeekShopping.IdentityServer.Configuration
                     ClientId = "client",
                     ClientSecrets = { new Secret("my_super_secret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    AllowedScopes = { "read", "write", "delete" }
+                    AllowedScopes = { "read", "write", "profile" }
                 },
                 new Client
                 {

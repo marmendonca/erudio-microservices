@@ -13,7 +13,9 @@ namespace GeekShopping.IdentityServer.Initializer
         private readonly UserManager<ApplicationUser> _user;
         private readonly RoleManager<IdentityRole> _role;
 
-        public DbInitializer(IdentityContext context, UserManager<ApplicationUser> user, RoleManager<IdentityRole> role)
+        public DbInitializer(IdentityContext context,
+            UserManager<ApplicationUser> user,
+            RoleManager<IdentityRole> role)
         {
             _context = context;
             _user = user;
@@ -23,48 +25,51 @@ namespace GeekShopping.IdentityServer.Initializer
         public void Initializer()
         {
             if (_role.FindByNameAsync(IdentityConfiguration.Admin).Result != null) return;
+            _role.CreateAsync(new IdentityRole(
+                IdentityConfiguration.Admin)).GetAwaiter().GetResult();
+            _role.CreateAsync(new IdentityRole(
+                IdentityConfiguration.Client)).GetAwaiter().GetResult();
 
-            _role.CreateAsync(new IdentityRole(IdentityConfiguration.Admin)).GetAwaiter().GetResult();
-            _role.CreateAsync(new IdentityRole(IdentityConfiguration.Client)).GetAwaiter().GetResult();
-
-            var admin = new ApplicationUser()
+            ApplicationUser admin = new ApplicationUser()
             {
-                UserName = "marilia-mendonca",
-                Email = "marilianobre1@gmail.com",
-                PhoneNumber = "85994347041",
-                FirstName = "Marilia",
+                UserName = "leandro-admin",
+                Email = "leandro-admin@erudio.com.br",
+                EmailConfirmed = true,
+                PhoneNumber = "+55 (34) 12345-6789",
+                FirstName = "Leandro",
                 LastName = "Admin"
             };
 
-            _user.CreateAsync(admin, "nobre123").GetAwaiter().GetResult();
-            _user.AddToRoleAsync(admin, IdentityConfiguration.Admin).GetAwaiter().GetResult();
-
+            _user.CreateAsync(admin, "Erudio123$").GetAwaiter().GetResult();
+            _user.AddToRoleAsync(admin,
+                IdentityConfiguration.Admin).GetAwaiter().GetResult();
             var adminClaims = _user.AddClaimsAsync(admin, new Claim[]
             {
                 new Claim(JwtClaimTypes.Name, $"{admin.FirstName} {admin.LastName}"),
                 new Claim(JwtClaimTypes.GivenName, admin.FirstName),
                 new Claim(JwtClaimTypes.FamilyName, admin.LastName),
-                new Claim(JwtClaimTypes.Role, IdentityConfiguration.Admin),
+                new Claim(JwtClaimTypes.Role, IdentityConfiguration.Admin)
             }).Result;
 
-            var client = new ApplicationUser()
+            ApplicationUser client = new ApplicationUser()
             {
-                UserName = "marilia-mendonca",
-                Email = "marilianobre1@gmail.com",
-                PhoneNumber = "85994347041",
-                FirstName = "Marilia",
-                LastName = "client"
+                UserName = "leandro-client",
+                Email = "leandro-client@erudio.com.br",
+                EmailConfirmed = true,
+                PhoneNumber = "+55 (34) 12345-6789",
+                FirstName = "Leandro",
+                LastName = "Client"
             };
 
-            _user.CreateAsync(client, "nobre123").GetAwaiter().GetResult();
-            _user.AddToRoleAsync(client, IdentityConfiguration.Client).GetAwaiter().GetResult();
-
+            _user.CreateAsync(client, "Erudio123$").GetAwaiter().GetResult();
+            _user.AddToRoleAsync(client,
+                IdentityConfiguration.Client).GetAwaiter().GetResult();
             var clientClaims = _user.AddClaimsAsync(client, new Claim[]
             {
                 new Claim(JwtClaimTypes.Name, $"{client.FirstName} {client.LastName}"),
                 new Claim(JwtClaimTypes.GivenName, client.FirstName),
                 new Claim(JwtClaimTypes.FamilyName, client.LastName),
-                new Claim(JwtClaimTypes.Role, IdentityConfiguration.Client),
+                new Claim(JwtClaimTypes.Role, IdentityConfiguration.Client)
             }).Result;
         }
     }
